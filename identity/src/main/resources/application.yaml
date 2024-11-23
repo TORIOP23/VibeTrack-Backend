@@ -1,0 +1,14 @@
+server:
+  port: 8080 # must match the port in the Dockerfile
+
+spring:
+  application:
+    name: identity-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/identity
+    username: identity
+    password: password
+  security:
+    user:
+      name: user
+      password: password
