@@ -1,5 +1,7 @@
 server:
   port: 8080 # must match the port in the Dockerfile
+  servlet:
+    context-path: /identity
 
 spring:
   application:
@@ -8,7 +10,14 @@ spring:
     url: jdbc:postgresql://localhost:5432/identity
     username: identity
     password: password
-  security:
-    user:
-      name: user
-      password: password
+    driverClassName: "org.postgresql.Driver"
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in seconds

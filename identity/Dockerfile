@@ -22,8 +22,6 @@ COPY --from=optimizer --chown=identity:identity /builder/extracted/snapshot-depe
 COPY --from=optimizer --chown=identity:identity /builder/extracted/application/ ./
 
 RUN java -XX:ArchiveClassesAtExit=application.jsa \
-    -Dspring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect \
-    -Dspring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access=false \
     -Dspring.jpa.hibernate.ddl-auto=none \
     -Dspring.sql.init.mode=never \
     -jar identity.jar
