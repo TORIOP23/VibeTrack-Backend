@@ -1,7 +1,8 @@
 server:
-  port: 8080 # must match the port in the Dockerfile
+  port: 9001 # must match the port in the Dockerfile
   servlet:
     context-path: /identity
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -19,8 +20,7 @@ spring:
 
 springdoc:
   api-docs:
-    enabled: true
-  enable-data-rest: true
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui

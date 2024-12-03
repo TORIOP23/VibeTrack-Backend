@@ -5,7 +5,7 @@ COPY src ./src
 RUN gradle build
 
 FROM eclipse-temurin:21-jre-alpine
-EXPOSE 8080
+EXPOSE 9001
 WORKDIR /app
 RUN addgroup -g 1000 identity  \
     && adduser -u 1000 -G identity -D -H identity

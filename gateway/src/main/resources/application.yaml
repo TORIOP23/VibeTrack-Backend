@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+app:
+  api-prefix: /api/v1
+
+spring:
+  application:
+    name: Gateway
+  cloud:
+    gateway:
+      routes:
+        - id: identity_service
+          uri: http://localhost:9001
+          predicates:
+            - Path=${app.api-prefix}/identity/**
+          filters:
+            - StripPrefix=2
