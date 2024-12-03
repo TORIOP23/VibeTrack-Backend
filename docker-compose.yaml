@@ -6,7 +6,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_CLOUD_GATEWAY_ROUTES_0_ID_URI: http://identity:9001
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: identity_service
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://identity:9001
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/identity/**
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERS[0]: StripPrefix=2
     depends_on:
       identity:
         condition: service_healthy
