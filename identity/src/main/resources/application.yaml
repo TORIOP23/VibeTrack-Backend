@@ -17,6 +17,14 @@ spring:
       ddl-auto: update
     show-sql: true
 
+springdoc:
+  api-docs:
+    enabled: true
+  enable-data-rest: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
   valid-duration: 3600 # in second
