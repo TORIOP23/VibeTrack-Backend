@@ -8,18 +8,21 @@ import com.vibetrack.identity.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring") // Spring is used as the component model
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+// Spring is used as the component model
 public interface UserMapper {
 
-    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "dob", ignore = true)
     User toUser(UserCreationRequest request);
 
     UserResponse toUserResponse(User user);
 
-    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "username", ignore = true)
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "id", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }

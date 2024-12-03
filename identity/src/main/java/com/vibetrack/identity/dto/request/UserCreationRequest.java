@@ -1,11 +1,8 @@
 package com.vibetrack.identity.dto.request;
 
-import com.vibetrack.identity.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +18,4 @@ public class UserCreationRequest {
 
     String firstName;
     String lastName;
-
-    @DobConstraint(min = 10, message = "INVALID_DOB")
-    LocalDate dob;
 }

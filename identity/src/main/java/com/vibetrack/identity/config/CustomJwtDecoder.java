@@ -1,8 +1,8 @@
 package com.vibetrack.identity.config;
 
 import com.nimbusds.jose.JOSEException;
-import com.vibetrack.identity.dto.request.IntrospectRequest;
-import com.vibetrack.identity.service.AuthenticationService;
+import com.vibetrack.identity.dto.request.TokenRequest;
+import com.vibetrack.identity.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -22,7 +22,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     private String signerKey;
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private AuthService authService;
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
@@ -30,8 +30,8 @@ public class CustomJwtDecoder implements JwtDecoder {
     public Jwt decode(String token) throws JwtException {
 
         try {
-            var response = authenticationService.introspect(
-                    IntrospectRequest.builder().token(token).build());
+            var response = authService.introspect(
+                    TokenRequest.builder().token(token).build());
 
             if (!response.isValid()) throw new JwtException("Token invalid");
         } catch (JOSEException | ParseException e) {

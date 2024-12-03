@@ -5,16 +5,17 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.vibetrack.identity.dto.request.AuthenticationRequest;
-import com.vibetrack.identity.dto.request.IntrospectRequest;
-import com.vibetrack.identity.dto.request.LogoutRequest;
-import com.vibetrack.identity.dto.request.RefreshRequest;
-import com.vibetrack.identity.dto.response.AuthenticationResponse;
+import com.vibetrack.identity.dto.request.AuthRequest;
+import com.vibetrack.identity.dto.request.TokenRequest;
+import com.vibetrack.identity.dto.request.UserCreationRequest;
+import com.vibetrack.identity.dto.response.AuthResponse;
 import com.vibetrack.identity.dto.response.IntrospectResponse;
+import com.vibetrack.identity.dto.response.UserResponse;
 import com.vibetrack.identity.entity.InvalidatedToken;
 import com.vibetrack.identity.entity.User;
 import com.vibetrack.identity.exception.AppException;
 import com.vibetrack.identity.exception.ErrorCode;
+import com.vibetrack.identity.mapper.UserMapper;
 import com.vibetrack.identity.repository.InvalidatedTokenRepository;
 import com.vibetrack.identity.repository.UserRepository;
 import lombok.AccessLevel;
@@ -23,25 +24,25 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.StringJoiner;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthenticationService {
+public class AuthService {
     UserRepository userRepository;
+    UserMapper userMapper;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    PasswordEncoder passwordEncoder;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -55,7 +56,7 @@ public class AuthenticationService {
     @Value("${jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
 
-    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
+    public IntrospectResponse introspect(TokenRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
         boolean isValid = true;
 
@@ -68,22 +69,45 @@ public class AuthenticationService {
         return IntrospectResponse.builder().valid(isValid).build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+    public AuthResponse register(UserCreationRequest request) {
+        User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        UserResponse userResponse = userMapper.toUserResponse(user);
+        return AuthResponse.builder()
+                .token(generateToken(user))
+                .user(userResponse)
+                .expiresAt(new Date(
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .build();
+    }
+
+    public AuthResponse login(AuthRequest request) {
         var user = userRepository
                 .findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
 
-        if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        UserResponse userResponse = userMapper.toUserResponse(user);
 
-        var token = generateToken(user);
-
-        return AuthenticationResponse.builder().token(token).authenticated(true).build();
+        return AuthResponse.builder()
+                .token(generateToken(user))
+                .user(userResponse)
+                .expiresAt(new Date(
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .build();
     }
 
-    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+    public void logout(TokenRequest request) throws ParseException, JOSEException {
         try {
             var signToken = verifyToken(request.getToken(), true);
 
@@ -99,7 +123,7 @@ public class AuthenticationService {
         }
     }
 
-    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+    public AuthResponse refreshToken(TokenRequest request) throws ParseException, JOSEException {
         var signedJWT = verifyToken(request.getToken(), true);
 
         var jit = signedJWT.getJWTClaimsSet().getJWTID();
@@ -115,9 +139,14 @@ public class AuthenticationService {
         var user =
                 userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        var token = generateToken(user);
+        var userResponse = userMapper.toUserResponse(user);
 
-        return AuthenticationResponse.builder().token(token).authenticated(true).build();
+        return AuthResponse.builder()
+                .token(generateToken(user))
+                .user(userResponse)
+                .expiresAt(new Date(
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .build();
     }
 
     private String generateToken(User user) {
@@ -130,7 +159,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope", buildScope(user))
+                .claim("scope", "ROLE_" + user.getRole())
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -168,18 +197,5 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
-    }
-
-    private String buildScope(User user) {
-        StringJoiner stringJoiner = new StringJoiner(" ");
-
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
-            });
-
-        return stringJoiner.toString();
     }
 }

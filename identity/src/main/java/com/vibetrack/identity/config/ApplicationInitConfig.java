@@ -1,9 +1,7 @@
 package com.vibetrack.identity.config;
 
-import com.vibetrack.identity.constant.PredefinedRole;
-import com.vibetrack.identity.entity.Role;
+import com.vibetrack.identity.constant.Role;
 import com.vibetrack.identity.entity.User;
-import com.vibetrack.identity.repository.RoleRepository;
 import com.vibetrack.identity.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +12,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.HashSet;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,34 +25,21 @@ public class ApplicationInitConfig {
     static final String ADMIN_USER_NAME = "admin";
     @NonFinal
     static final String ADMIN_PASSWORD = "admin";
-    PasswordEncoder passwordEncoder;
 
     @Bean
     @ConditionalOnProperty(
             prefix = "spring",
             value = "datasource.driverClassName",
             havingValue = "org.postgresql.Driver")
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
-                roleRepository.save(Role.builder()
-                        .name(PredefinedRole.USER_ROLE)
-                        .description("User role")
-                        .build());
-
-                Role adminRole = roleRepository.save(Role.builder()
-                        .name(PredefinedRole.ADMIN_ROLE)
-                        .description("Admin role")
-                        .build());
-
-                var roles = new HashSet<Role>();
-                roles.add(adminRole);
 
                 User user = User.builder()
                         .username(ADMIN_USER_NAME)
-                        .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                        .roles(roles)
+                        .password(new BCryptPasswordEncoder(10).encode(ADMIN_PASSWORD))
+                        .role(Role.ADMIN)
                         .build();
 
                 userRepository.save(user);
@@ -63,5 +47,10 @@ public class ApplicationInitConfig {
             }
             log.info("Application initialization completed .....");
         };
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
     }
 }

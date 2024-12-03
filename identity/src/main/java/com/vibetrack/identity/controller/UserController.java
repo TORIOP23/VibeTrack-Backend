@@ -1,11 +1,9 @@
 package com.vibetrack.identity.controller;
 
-import com.vibetrack.identity.dto.response.ApiResponse;
-import com.vibetrack.identity.dto.request.UserCreationRequest;
 import com.vibetrack.identity.dto.request.UserUpdateRequest;
+import com.vibetrack.identity.dto.response.ApiResponse;
 import com.vibetrack.identity.dto.response.UserResponse;
 import com.vibetrack.identity.service.UserService;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,13 +20,6 @@ import java.util.List;
 public class UserController {
     UserService userService;
 
-    @PostMapping
-    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.<UserResponse>builder()
-                .result(userService.createUser(request))
-                .build();
-    }
-
     @GetMapping
     ApiResponse<List<UserResponse>> getUsers() {
         return ApiResponse.<List<UserResponse>>builder()
@@ -43,7 +34,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/my-info")
+    @GetMapping("/me")
     ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())

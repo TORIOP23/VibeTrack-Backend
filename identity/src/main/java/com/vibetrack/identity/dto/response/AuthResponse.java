@@ -1,14 +1,17 @@
-package com.vibetrack.identity.dto.request;
+package com.vibetrack.identity.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PermissionRequest {
-    String name;
-    String description;
+public class AuthResponse {
+    String token;
+    UserResponse user;
+    Date expiresAt;
 }

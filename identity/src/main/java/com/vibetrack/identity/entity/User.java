@@ -1,11 +1,11 @@
 package com.vibetrack.identity.entity;
 
+import com.vibetrack.identity.constant.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,7 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(name = "username", unique = true)
+    @Column(unique = true)
     String username;
 
     String password;
@@ -28,6 +28,8 @@ public class User {
     LocalDate dob;
     String lastName;
 
-    @ManyToMany
-    Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    @Builder.Default
+    Role role = Role.USER;
 }

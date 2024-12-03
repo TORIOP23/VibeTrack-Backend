@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE) // Lombok annotation to create all fields as private
-public class AuthenticationRequest {
+public class AuthRequest {
     String username;
     String password;
 }
