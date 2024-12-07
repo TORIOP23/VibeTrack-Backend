@@ -8,10 +8,10 @@ spring:
   application:
     name: identity-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/identity
+    url: jdbc:mysql://localhost:3306/identity
     username: identity
     password: password
-    driverClassName: "org.postgresql.Driver"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
   jpa:
     open-in-view: true
     hibernate:

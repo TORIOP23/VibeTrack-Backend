@@ -24,3 +24,5 @@ target/
 .env
 .DS_Store
 */.DS_Store
+fma_small
+init-script/aurora.sql

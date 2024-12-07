@@ -1,73 +1,67 @@
 services:
-  gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: identity_service
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://identity:9001
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/identity/**
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERS[0]: StripPrefix=2
-    depends_on:
-      identity:
-        condition: service_healthy
+  #  gateway:
+  #    build:
+  #      context: ./gateway
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - "8080:8080"
+  #    environment:
+  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: identity_service
+  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://identity:9001
+  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/identity/**
+  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERS[0]: StripPrefix=2
+  #    depends_on:
+  #      identity:
+  #        condition: service_healthy
+  #
+  #  identity:
+  #    build:
+  #      context: ./identity
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - "9001:9001"
+  #    environment:
+  #      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/identity
+  #      SPRING_DATASOURCE_USERNAME: identity
+  #      SPRING_DATASOURCE_PASSWORD: password
+  #    healthcheck:
+  #      test: "wget -T5 -qO- localhost:9001/identity/actuator/health | grep UP || exit 1"
+  #      retries: 5
+  #      start_interval: 5s
+  #      start_period: 30s
+  #      timeout: 10s
+  #    depends_on:
+  #      postgres:
+  #        condition: service_healthy
 
-  identity:
-    build:
-      context: ./identity
-      dockerfile: Dockerfile
-    ports:
-      - "9001:9001"
+  mysql:
+    image: mysql:latest
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/identity
-      SPRING_DATASOURCE_USERNAME: identity
-      SPRING_DATASOURCE_PASSWORD: password
-    healthcheck:
-      test: "wget -T5 -qO- localhost:9001/identity/actuator/health | grep UP || exit 1"
-      retries: 5
-      start_interval: 5s
-      start_period: 30s
-      timeout: 10s
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/db_schema.sql
+      - mysql_data:/var/lib/mysql
+      - ./init-script:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - vibetrack
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  adminer:
+    image: adminer
     ports:
-      - "5050:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - 5050:8080
+    networks:
+      - vibetrack
+
+volumes:
+  mysql_data:
 
 networks:
   vibetrack:
-    name: ${NETWORK_NAME}
+    name: VibeTrack
     driver: bridge
-
-volumes:
-  postgres_data:
-  pgadmin_data:

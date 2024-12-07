@@ -1,0 +1,24 @@
+server:
+  port: 9002
+  servlet:
+    context-path: /aurora
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: aurora-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/aurora
+    username: aurora
+    password: password
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+  jpa:
+    open-in-view: true
+    show-sql: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui

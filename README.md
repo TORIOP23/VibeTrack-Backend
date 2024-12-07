@@ -2,11 +2,12 @@
 
 ## Getting Started
 
-### Create a `.env` file
+### Prerequisites
 
-```bash
-cp .env.example .env
-```
+- Download and install [Docker](https://www.docker.com/products/docker-desktop)
+- Download dataset from [MusicOSet](https://marianaossilva.github.io/DSW2019/) and change the name to `aurora.sql` and
+  place it in the `init-script` folder.
+- (You must download the dataset yourself, as I cannot provide it due to GitHub's file size limit of 100.00 MB)
 
 ### Start the server
 
@@ -19,3 +20,7 @@ docker compose up -d
 ```bash
 docker compose down
 ```
+
+## Dataset
+
+- Special thanks to [MusicOSet](https://marianaossilva.github.io/DSW2019/) for providing the dataset.
