@@ -12,6 +12,7 @@ import com.vibetrack.aurora.mapper.AlbumMapper;
 import com.vibetrack.aurora.repository.AlbumRepository;
 import com.vibetrack.aurora.repository.SongRepository;
 import com.vibetrack.aurora.repository.TrackRepository;
+import com.vibetrack.aurora.util.ApplicationInit;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,7 @@ public class AlbumService {
     }
 
     private SongResponse toSongResponse(Song song) {
+        String url = "http://" + ApplicationInit.ipAddress + ":9002/aurora/audio/" + song.getSongId() + ".mp3";
         return SongResponse.builder()
                 .songId(song.getSongId())
                 .songName(song.getSongName())
@@ -68,6 +70,7 @@ public class AlbumService {
                 .popularity(song.getPopularity())
                 .explicit(song.getExplicit())
                 .songType(song.getSongType())
+                .url(url)
                 .build();
     }
 }
