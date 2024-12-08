@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 @Component
 @Slf4j
@@ -16,10 +18,21 @@ public class ApplicationInit {
     @PostConstruct
     public void init() {
         try {
-            ipAddress = InetAddress.getLocalHost().getHostAddress();
-            log.info("IP address: {}", ipAddress);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("Failed to get IP address", e);
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+                    if (inetAddress.isSiteLocalAddress() && !inetAddress.isLoopbackAddress()) {
+                        ipAddress = inetAddress.getHostAddress();
+                        log.info("IP address: {}", ipAddress);
+                        break;
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
         }
     }
 }
