@@ -25,5 +25,5 @@ target/
 .DS_Store
 */.DS_Store
 fma_small
-init-script/aurora.sql
+init-script/data-aurora.sql
 aurora/src/main/resources/static/audio/**/*

@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @Builder
@@ -14,22 +16,21 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "tracks")
-public class Track {
-
+@Table(name = "album_chart")
+public class AlbumChart {
     @Id
-    @Column(name = "song_id", length = 22)
-    String songId;
-
     @Column(name = "album_id", length = 22)
     String albumId;
 
-    @Column(name = "track_number")
-    Integer trackNumber;
+    @Column(name = "rank_score")
+    Integer rankScore;
 
-    @Column(name = "release_date", length = 10)
-    String releaseDate;
+    @Column(name = "peak_position")
+    Integer peakPosition;
 
-    @Column(name = "release_date_precision", length = 5)
-    String releaseDatePrecision;
+    @Column(name = "weeks_on_chart")
+    Integer weeksOnChart;
+
+    @Column(name = "week")
+    Date week;
 }

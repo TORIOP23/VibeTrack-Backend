@@ -14,22 +14,18 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "tracks")
-public class Track {
-
+@Table(name = "album_pop")
+public class AlbumPop {
     @Id
-    @Column(name = "song_id", length = 22)
-    String songId;
-
     @Column(name = "album_id", length = 22)
     String albumId;
 
-    @Column(name = "track_number")
-    Integer trackNumber;
+    @Column(name = "year_end_score", length = 5)
+    Integer yearEndScore;
 
-    @Column(name = "release_date", length = 10)
-    String releaseDate;
+    @Column(name = "is_pop", length = 5)
+    String isPop;
 
-    @Column(name = "release_date_precision", length = 5)
-    String releaseDatePrecision;
+    @Column(name = "year", length = 4)
+    Integer year;
 }

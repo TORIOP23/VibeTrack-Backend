@@ -5,7 +5,7 @@
 ### Prerequisites
 
 - Download and install [Docker](https://www.docker.com/products/docker-desktop)
-- Download dataset from [MusicOSet](https://marianaossilva.github.io/DSW2019/) and change the name to `aurora.sql` and
+- Download dataset from [Driver](https://drive.google.com/file/d/1vniXd_tNtlbsZFVShmUvPnlZNddMPbvZ/view?usp=sharing) and
   place it in the `init-script` folder.
 - (You must download the dataset yourself, as I cannot provide it due to GitHub's file size limit of 100.00 MB)
 

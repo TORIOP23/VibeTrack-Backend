@@ -1,5 +1,6 @@
 package com.vibetrack.aurora.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,22 +15,19 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "tracks")
-public class Track {
+@Table(name = "releases")
+public class Release {
 
     @Id
-    @Column(name = "song_id", length = 22)
-    String songId;
+    @Column(name = "artist_id")
+    String artistId;
 
-    @Column(name = "album_id", length = 22)
+    @Column(name = "album_id")
     String albumId;
 
-    @Column(name = "track_number")
-    Integer trackNumber;
-
-    @Column(name = "release_date", length = 10)
+    @Column(name = "release_date")
     String releaseDate;
 
-    @Column(name = "release_date_precision", length = 5)
+    @Column(name = "release_date_precision")
     String releaseDatePrecision;
 }
