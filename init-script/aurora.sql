@@ -80,13 +80,13 @@ CREATE TABLE `song_pop` (
 --
 
 CREATE TABLE `lyrics` (
-  `song_id` varchar(22) COLLATE utf8_general_mysql500_ci NOT NULL,
+  `song_id` varchar(22) PRIMARY KEY,
   `lyrics` mediumtext COLLATE utf8_general_mysql500_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_mysql500_ci;
 
 
 --
--- Estrutura da tabela `albums`
+-- Structure of the album table
 --
 
 CREATE TABLE `albums` (
@@ -103,7 +103,7 @@ CREATE TABLE `albums` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `album_chart`
+-- Structure of the album_chart table
 --
 
 CREATE TABLE `album_chart` (
@@ -117,7 +117,7 @@ CREATE TABLE `album_chart` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `album_pop`
+-- Structure of the album_pop table
 --
 
 CREATE TABLE `album_pop` (
@@ -130,7 +130,7 @@ CREATE TABLE `album_pop` (
 
 -- --------------------------------------------------------
 --
--- Estrutura da tabela `artists`
+-- Structure of the artist table
 --
 
 CREATE TABLE `artists` (
@@ -147,7 +147,7 @@ CREATE TABLE `artists` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `artist_chart`
+-- Structure of the artist_chart table
 --
 
 CREATE TABLE `artist_chart` (
@@ -160,32 +160,36 @@ CREATE TABLE `artist_chart` (
 
 
 --
--- Estrutura da tabela `artist_pop`
+-- Structure of the artist_pop table
 --
 
 CREATE TABLE `artist_pop` (
   `artist_id` varchar(22),
   `year_end_score` MEDIUMINT,
-  `year` SMALLINT
+  `year` SMALLINT,
+   PRIMARY KEY (`artist_id`, `year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
 --
--- Estrutura da tabela `releases`
+-- Structure of the releases table
 --
 
 CREATE TABLE `releases` (
   `artist_id` varchar(22),
   `album_id` varchar(22),
   `release_date` varchar(10),
-  `release_date_precision` varchar(5)
+  `release_date_precision` varchar(5),
+  PRIMARY KEY (`artist_id`, `album_id`)
+--  FOREIGN KEY (`artist_id`) REFERENCES `artists` (`artist_id`),
+--  FOREIGN KEY (`album_id`) REFERENCES `albums` (`album_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
 --
--- Estrutura da tabela `tracks`
+-- Structure of the tracks table
 --
 
 CREATE TABLE `tracks` (
@@ -193,5 +197,8 @@ CREATE TABLE `tracks` (
   `album_id` varchar(22),
   `track_number` SMALLINT,
   `release_date` varchar(10),
-  `release_date_precision` varchar(5)
+  `release_date_precision` varchar(5),
+   PRIMARY KEY (`song_id`, `album_id`)
+--    FOREIGN KEY (`song_id`) REFERENCES `songs` (`song_id`),
+--    FOREIGN KEY (`album_id`) REFERENCES `albums` (`album_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
