@@ -5,14 +5,13 @@ import com.vibetrack.aurora.dto.response.AlbumResponse;
 import com.vibetrack.aurora.dto.response.PaginatedResponse;
 import com.vibetrack.aurora.dto.response.SongResponse;
 import com.vibetrack.aurora.entity.Album;
-import com.vibetrack.aurora.entity.Song;
 import com.vibetrack.aurora.exception.AppException;
 import com.vibetrack.aurora.exception.ErrorCode;
 import com.vibetrack.aurora.mapper.AlbumMapper;
+import com.vibetrack.aurora.mapper.SongMapper;
 import com.vibetrack.aurora.repository.AlbumRepository;
 import com.vibetrack.aurora.repository.SongRepository;
 import com.vibetrack.aurora.repository.TrackRepository;
-import com.vibetrack.aurora.util.ApplicationInit;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +33,7 @@ public class AlbumService {
     AlbumRepository albumRepository;
     TrackRepository trackRepository;
     SongRepository songRepository;
+    SongMapper songMapper;
     AlbumMapper albumMapper;
 
     public PaginatedResponse<AlbumResponse> getAlbums(Pageable pageable, boolean unpaged) {
@@ -54,23 +54,9 @@ public class AlbumService {
 
         List<String> songIds = trackRepository.getSongIdsByAlbumId(albumId);
         List<SongResponse> songs = songRepository.findAllById(songIds).stream()
-                .map(this::toSongResponse)
+                .map(songMapper::toSongResponse)
                 .toList();
 
         return albumMapper.toAlbumDetailResponse(album, songs);
-    }
-
-    private SongResponse toSongResponse(Song song) {
-        String url = "http://" + ApplicationInit.ipAddress + ":9002/aurora/audio/" + song.getSongId() + ".mp3";
-        return SongResponse.builder()
-                .songId(song.getSongId())
-                .songName(song.getSongName())
-                .billboard(song.getBillboard())
-                .artists(song.getArtists())
-                .popularity(song.getPopularity())
-                .explicit(song.getExplicit())
-                .songType(song.getSongType())
-                .url(url)
-                .build();
     }
 }
