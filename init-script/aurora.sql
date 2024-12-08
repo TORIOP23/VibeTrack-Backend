@@ -192,10 +192,7 @@ CREATE TABLE `releases` (
 -- Structure of the tracks table
 --
 
-CREATE TABLE `tracks` (
-  `song_id` varchar(22),
-  `album_id` varchar(22),
-  `track_number` SMALLINT,
+CREATE tr
   `release_date` varchar(10),
   `release_date_precision` varchar(5),
    PRIMARY KEY (`song_id`, `album_id`)

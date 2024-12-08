@@ -16,3 +16,9 @@ spring:
             - Path=${app.api-prefix}/identity/**
           filters:
             - StripPrefix=2
+        - id: aurora_service
+          uri: http://localhost:9002
+          predicates:
+            - Path=${app.api-prefix}/aurora/**
+          filters:
+            - StripPrefix=2
