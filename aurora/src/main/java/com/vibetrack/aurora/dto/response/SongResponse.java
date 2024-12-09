@@ -3,6 +3,8 @@ package com.vibetrack.aurora.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,7 +14,7 @@ public class SongResponse {
     String songId;
     String songName;
     String billboard;
-    String artists;
+    List<ShortArtistResponse> artists;
     Integer popularity;
     String explicit;
     String songType;
