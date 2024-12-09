@@ -39,6 +39,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
             "/identity/.*",
             "/aurora/albums/.*",
             "/aurora/artists/.*",
+            "/aurora/artists",
+            "/aurora/albums",
     };
 
     @Value("${app.api-prefix}")
