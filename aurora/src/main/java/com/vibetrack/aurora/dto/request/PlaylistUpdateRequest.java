@@ -1,4 +1,4 @@
-package com.vibetrack.identity.dto.response;
+package com.vibetrack.aurora.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponse {
-    boolean valid;
-    String userId;
+public class PlaylistUpdateRequest {
+    String name;
+    String description;
+    String imageUrl;
 }

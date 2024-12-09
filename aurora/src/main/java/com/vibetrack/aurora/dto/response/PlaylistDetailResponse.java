@@ -10,13 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AlbumResponse {
-    String albumId;
+public class PlaylistDetailResponse {
+    String playlistId;
     String name;
-    String billboard;
-    List<ShortArtistResponse> artists;
-    Integer popularity;
-    Integer totalTracks;
-    String albumType;
+    String description;
+    String ownerId;
     String imageUrl;
+    List<SongResponse> songs;
 }

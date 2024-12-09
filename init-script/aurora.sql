@@ -202,3 +202,19 @@ CREATE TABLE `tracks` (
 --    FOREIGN KEY (`song_id`) REFERENCES `songs` (`song_id`),
 --    FOREIGN KEY (`album_id`) REFERENCES `albums` (`album_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `playlists` (
+    `playlist_id` varchar(32) PRIMARY KEY,
+    `name` varchar(191),
+    `description` varchar(191),
+    `owner_id` varchar(32),
+    `image_url` varchar(64)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `playlist_songs` (
+    `playlist_id` varchar(32),
+    `song_id` varchar(22),
+    PRIMARY KEY (`playlist_id`, `song_id`),
+    FOREIGN KEY (`playlist_id`) REFERENCES `playlists`(`playlist_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`song_id`) REFERENCES `songs`(`song_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

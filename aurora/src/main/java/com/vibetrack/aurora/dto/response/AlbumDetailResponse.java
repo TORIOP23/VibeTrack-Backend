@@ -14,7 +14,7 @@ public class AlbumDetailResponse {
     String albumId;
     String name;
     String billboard;
-    String artists;
+    List<ShortArtistResponse> artists;
     Integer popularity;
     Integer totalTracks;
     String albumType;

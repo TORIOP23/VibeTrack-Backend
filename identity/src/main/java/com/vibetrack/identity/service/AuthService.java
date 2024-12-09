@@ -58,15 +58,19 @@ public class AuthService {
 
     public IntrospectResponse introspect(TokenRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
+
+        String userId = null;
         boolean isValid = true;
 
         try {
-            verifyToken(token, false);
+            var signedJWT = verifyToken(token, false);
+            userId = signedJWT.getJWTClaimsSet().getSubject();
+
         } catch (AppException e) {
             isValid = false;
         }
 
-        return IntrospectResponse.builder().valid(isValid).build();
+        return IntrospectResponse.builder().valid(isValid).userId(userId).build();
     }
 
     public AuthResponse register(UserCreationRequest request) {
@@ -134,10 +138,10 @@ public class AuthService {
 
         invalidatedTokenRepository.save(invalidatedToken);
 
-        var username = signedJWT.getJWTClaimsSet().getSubject();
+        var userId = signedJWT.getJWTClaimsSet().getSubject();
 
-        var user =
-                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var userResponse = userMapper.toUserResponse(user);
 
@@ -153,7 +157,7 @@ public class AuthService {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
                 .issuer("vibetrack.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(

@@ -30,14 +30,14 @@ public class UserService {
 
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
+        String id = context.getAuthentication().getName();
 
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
 
-    @PostAuthorize("returnObject.username == authentication.name")
+    @PostAuthorize("returnObject.id == authentication.name")
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 

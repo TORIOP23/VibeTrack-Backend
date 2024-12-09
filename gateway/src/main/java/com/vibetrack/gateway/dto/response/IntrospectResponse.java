@@ -1,4 +1,4 @@
-package com.vibetrack.identity.dto.response;
+package com.vibetrack.gateway.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

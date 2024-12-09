@@ -4,6 +4,7 @@ import com.vibetrack.aurora.dto.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +38,16 @@ public class GlobalExceptionHandler {
         apiResponse.setMessage(errorCode.getMessage());
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    ResponseEntity<ApiResponse<?>> handlingHttpMessageNotReadable(HttpMessageNotReadableException exception) {
+        ApiResponse<?> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(ErrorCode.INVALID_JSON.getCode());
+        apiResponse.setMessage(ErrorCode.INVALID_JSON.getMessage());
+
+        return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
