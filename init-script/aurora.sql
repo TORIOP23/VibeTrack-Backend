@@ -3,9 +3,11 @@ CREATE DATABASE aurora;
 
 -- Create user
 CREATE USER 'aurora'@'%' IDENTIFIED BY 'password';
+CREATE USER 'ai'@'%' IDENTIFIED BY 'password';
 
 -- Grant privileges for the identity database
 GRANT ALL PRIVILEGES ON aurora.* TO 'aurora'@'%';
+GRANT ALL PRIVILEGES ON aurora.* TO 'ai'@'%';
 
 -- Apply the changes
 FLUSH PRIVILEGES;
@@ -204,15 +206,15 @@ CREATE TABLE `tracks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `playlists` (
-    `playlist_id` varchar(32) PRIMARY KEY,
+    `playlist_id` varchar(36) PRIMARY KEY,
     `name` varchar(191),
     `description` varchar(191),
-    `owner_id` varchar(32),
+    `owner_id` varchar(36),
     `image_url` varchar(64)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `playlist_songs` (
-    `playlist_id` varchar(32),
+    `playlist_id` varchar(36),
     `song_id` varchar(22),
     PRIMARY KEY (`playlist_id`, `song_id`),
     FOREIGN KEY (`playlist_id`) REFERENCES `playlists`(`playlist_id`) ON DELETE CASCADE,
