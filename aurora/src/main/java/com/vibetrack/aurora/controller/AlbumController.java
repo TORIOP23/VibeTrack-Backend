@@ -12,6 +12,8 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/albums")
 @RequiredArgsConstructor
@@ -19,6 +21,14 @@ import org.springframework.web.bind.annotation.*;
 public class AlbumController {
 
     AlbumService albumService;
+
+    @GetMapping("/search")
+    ApiResponse<List<AlbumResponse>> getAlbums(
+            @RequestParam String name
+    ) {
+        var albums = albumService.getAlbumsByName(name);
+        return ApiResponse.<List<AlbumResponse>>builder().result(albums).build();
+    }
 
     @GetMapping
     ApiResponse<PaginatedResponse<AlbumResponse>> getAlbums(

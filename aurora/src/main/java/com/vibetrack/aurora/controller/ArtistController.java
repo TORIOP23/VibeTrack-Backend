@@ -12,6 +12,8 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/artists")
 @RequiredArgsConstructor
@@ -24,6 +26,14 @@ public class ArtistController {
                                                               @RequestParam(defaultValue = "false") boolean unpaged) {
         var artists = artistService.getArtists(pageable, unpaged);
         return ApiResponse.<PaginatedResponse<ArtistResponse>>builder().result(artists).build();
+    }
+
+    @GetMapping("/search")
+    ApiResponse<List<ArtistResponse>> getArtists(
+            @RequestParam String name) {
+
+        var artists = artistService.getArtistsByName(name);
+        return ApiResponse.<List<ArtistResponse>>builder().result(artists).build();
     }
 
     @GetMapping("/{artistId}")

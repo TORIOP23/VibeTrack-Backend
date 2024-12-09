@@ -59,4 +59,10 @@ public class AlbumService {
 
         return albumMapper.toAlbumDetailResponse(album, songs);
     }
+
+    public List<AlbumResponse> getAlbumsByName(String name) {
+        return albumRepository.findByNameContaining(name).stream()
+                .map(albumMapper::toAlbumResponse)
+                .toList();
+    }
 }

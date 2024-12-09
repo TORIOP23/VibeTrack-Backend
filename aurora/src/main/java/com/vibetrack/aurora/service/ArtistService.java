@@ -54,4 +54,10 @@ public class ArtistService {
 
         return artistMapper.toArtistDetailResponse(artist, songs, albums);
     }
+
+    public List<ArtistResponse> getArtistsByName(String name) {
+        return artistRepository.findByNameContaining(name).stream()
+                .map(artistMapper::toArtistResponse)
+                .toList();
+    }
 }

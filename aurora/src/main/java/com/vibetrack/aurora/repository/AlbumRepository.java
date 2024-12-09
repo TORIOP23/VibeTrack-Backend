@@ -13,4 +13,7 @@ public interface AlbumRepository extends PagingAndSortingRepository<Album, Strin
 
     @Query(value = "SELECT * FROM albums a WHERE a.artists LIKE %:artistId%", nativeQuery = true)
     List<Album> findByArtist(@Param("artistId") String artistId);
+
+    @Query(value = "SELECT * FROM albums a WHERE a.name LIKE %:query% LIMIT 10", nativeQuery = true)
+    List<Album> findByNameContaining(@Param("query") String query);
 }
