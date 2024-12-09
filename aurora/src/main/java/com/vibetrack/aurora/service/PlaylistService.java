@@ -114,4 +114,28 @@ public class PlaylistService {
                 .toList());
         return response;
     }
+
+    public PlaylistDetailResponse removeSongFromPlaylist(String userId, String playlistId, String songId) {
+        var playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new AppException(ErrorCode.PLAYLIST_NOT_FOUND));
+
+        if (!playlist.getOwnerId().equals(userId)) {
+            throw new AppException(ErrorCode.PLAYLIST_NOT_FOUND);
+        }
+
+        var song = songRepository.findById(songId)
+                .orElseThrow(() -> new AppException(ErrorCode.SONG_NOT_FOUND));
+
+        if (playlist.getSongs().contains(song)) {
+            playlist.getSongs().remove(song);
+            playlist.setSongCount(playlist.getSongs().size());
+        }
+
+        var updatedPlaylist = playlistRepository.save(playlist);
+        var response = playlistMapper.toPlaylistDetailResponse(updatedPlaylist);
+        response.setSongs(updatedPlaylist.getSongs().stream()
+                .map(songMapper::toSongResponse)
+                .toList());
+        return response;
+    }
 }

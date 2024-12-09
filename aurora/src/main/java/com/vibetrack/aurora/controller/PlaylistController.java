@@ -67,6 +67,16 @@ public class PlaylistController {
         return ApiResponse.<PlaylistDetailResponse>builder().result(playlist).build();
     }
 
+    @PutMapping("/{playlistId}/remove/{songId}")
+    public ApiResponse<PlaylistDetailResponse> removeSongFromPlaylist(
+            @RequestHeader("X-User-Id") String userId,
+            @PathVariable String playlistId,
+            @PathVariable String songId
+    ) {
+        var playlist = playlistService.removeSongFromPlaylist(userId, playlistId, songId);
+        return ApiResponse.<PlaylistDetailResponse>builder().result(playlist).build();
+    }
+
 
     @DeleteMapping("/{playlistId}")
     public ApiResponse<String> deletePlaylist(
