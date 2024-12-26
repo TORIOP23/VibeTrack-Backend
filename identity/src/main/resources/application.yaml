@@ -5,6 +5,8 @@ server:
   forward-headers-strategy: framework
 
 spring:
+  main:
+    banner-mode: off
   application:
     name: identity-service
   datasource:

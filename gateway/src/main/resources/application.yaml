@@ -5,6 +5,8 @@ app:
   api-prefix: /api/v1
 
 spring:
+  main:
+    banner-mode: off
   application:
     name: Gateway
   cloud:

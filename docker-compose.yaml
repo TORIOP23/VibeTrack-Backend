@@ -1,38 +1,45 @@
 services:
-  #  gateway:
-  #    build:
-  #      context: ./gateway
-  #      dockerfile: Dockerfile
-  #    ports:
-  #      - "8080:8080"
-  #    environment:
-  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: identity_service
-  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://identity:9001
-  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/identity/**
-  #      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERS[0]: StripPrefix=2
-  #    depends_on:
-  #      identity:
-  #        condition: service_healthy
-  #
-  #  identity:
-  #    build:
-  #      context: ./identity
-  #      dockerfile: Dockerfile
-  #    ports:
-  #      - "9001:9001"
-  #    environment:
-  #      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/identity
-  #      SPRING_DATASOURCE_USERNAME: identity
-  #      SPRING_DATASOURCE_PASSWORD: password
-  #    healthcheck:
-  #      test: "wget -T5 -qO- localhost:9001/identity/actuator/health | grep UP || exit 1"
-  #      retries: 5
-  #      start_interval: 5s
-  #      start_period: 30s
-  #      timeout: 10s
-  #    depends_on:
-  #      postgres:
-  #        condition: service_healthy
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: identity_service
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://identity:9001
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/identity/**
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERS[0]: StripPrefix=2
+
+  aurora:
+    build:
+      context: ./aurora
+      dockerfile: Dockerfile
+    ports:
+      - "9002:9002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/identity
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  identity:
+    build:
+      context: ./identity
+      dockerfile: Dockerfile
+    ports:
+      - "9001:9001"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/identity
+    healthcheck:
+      test: "wget -T5 -qO- localhost:9001/identity/actuator/health | grep UP || exit 1"
+      retries: 5
+      start_interval: 5s
+      start_period: 30s
+      timeout: 10s
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql:latest
