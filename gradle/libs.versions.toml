@@ -1,0 +1,23 @@
+[versions]
+spring-boot = "3.4.0"
+spring-dependencies-management = "1.1.6"
+mapstruct = "1.5.5.Final"
+lombokMapstructBinding = "0.2.0"
+springdoc = "2.7.0"
+
+[libraries]
+web = { module = "org.springframework.boot:spring-boot-starter-web" }
+actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstructProcessor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+lombokMapstructBinding = { module = "org.projectlombok:lombok-mapstruct-binding", version.ref = "lombokMapstructBinding" }
+lombok = { module = "org.projectlombok:lombok" }
+springdoc = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+
+[bundles]
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependencies = { id = "io.spring.dependency-management", version.ref = "spring-dependencies-management" }

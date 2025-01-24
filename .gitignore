@@ -27,3 +27,9 @@ target/
 fma_small
 init-script/data-aurora.sql
 aurora/src/main/resources/static/audio/**/*
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

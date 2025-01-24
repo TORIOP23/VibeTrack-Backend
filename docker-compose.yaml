@@ -1,32 +1,24 @@
 services:
   gateway:
     build:
-      context: ./gateway
-      dockerfile: Dockerfile
+      dockerfile: ./docker/Dockerfile.gateway
     ports:
       - "8080:8080"
-    environment:
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: identity_service
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://identity:9001
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/identity/**
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERS[0]: StripPrefix=2
 
   aurora:
     build:
-      context: ./aurora
-      dockerfile: Dockerfile
+      dockerfile: ./docker/Dockerfile.aurora
     ports:
       - "9002:9002"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/identity
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/aurora
     depends_on:
       mysql:
         condition: service_healthy
 
   identity:
     build:
-      context: ./identity
-      dockerfile: Dockerfile
+      dockerfile: ./docker/Dockerfile.identity
     ports:
       - "9001:9001"
     environment:
@@ -55,20 +47,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - vibetrack
 
   adminer:
     image: adminer
     ports:
       - 5050:8080
-    networks:
-      - vibetrack
 
 volumes:
   mysql_data:
-
-networks:
-  vibetrack:
-    name: VibeTrack
-    driver: bridge

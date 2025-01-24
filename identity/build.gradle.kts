@@ -13,7 +13,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -24,23 +24,30 @@ configurations {
 }
 
 dependencies {
-    implementation(libs.actuator)
     implementation(libs.jpa)
-    implementation(libs.validation)
     implementation(libs.web)
+    implementation(libs.validation)
+    implementation(libs.actuator)
 
     implementation(libs.mapstruct)
     annotationProcessor(libs.mapstructProcessor)
     annotationProcessor(libs.lombokMapstructBinding)
 
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
     implementation(libs.springdoc)
+    // https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.26")
+
+    runtimeOnly("com.mysql:mysql-connector-j")
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 
-    runtimeOnly("com.mysql:mysql-connector-j")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

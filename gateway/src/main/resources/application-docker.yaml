@@ -1,25 +1,15 @@
-server:
-  port: 8080
-
-app:
-  api-prefix: /api/v1
-
 spring:
-  main:
-    banner-mode: off
-  application:
-    name: Gateway
   cloud:
     gateway:
       routes:
         - id: identity_service
-          uri: ${ IDENTITY_SERVICE_URL:http://localhost:9001 }
+          uri: http://identity:9001
           predicates:
             - Path=${app.api-prefix}/identity/**
           filters:
             - StripPrefix=2
         - id: aurora_service
-          uri: ${ AURORA_SERVICE_URL:http://localhost:9002 }
+          uri: http://aurora:9002
           predicates:
             - Path=${app.api-prefix}/aurora/**
           filters:
@@ -30,4 +20,3 @@ spring:
             - Path=${app.api-prefix}/ai/**
           filters:
             - StripPrefix=2
-

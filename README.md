@@ -10,6 +10,13 @@
   place it in the `init-script` folder.
 - (You must download the dataset yourself, as I cannot provide it due to GitHub's file size limit of 100.00 MB)
 
+### Run services
+
+```shell
+./gradlew bootRun
+./gradlew :aurora:bootRun
+```
+
 ### Start the server
 
 ```bash

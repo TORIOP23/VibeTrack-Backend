@@ -1,7 +1,8 @@
 FROM gradle:jdk21 AS builder
 WORKDIR /builder
-COPY build.gradle.kts settings.gradle.kts ./
-COPY src ./src
+COPY ./gateway/build.gradle.kts ./gateway/settings.gradle.kts ./
+COPY ./gradle/libs.versions.toml ./gradle/
+COPY ./gateway/src ./src
 RUN gradle build
 
 FROM eclipse-temurin:21-jre-alpine
@@ -11,4 +12,4 @@ RUN addgroup -g 1000 gateway  \
     && adduser -u 1000 -G gateway -D -H gateway
 COPY --from=builder --chown=gateway:gateway /builder/build/libs/*.jar ./gateway.jar
 USER gateway
-ENTRYPOINT ["java","-jar","./gateway.jar"]
+ENTRYPOINT ["java","-jar","./gateway.jar", "--spring.profiles.active=docker"]
